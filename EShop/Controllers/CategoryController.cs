@@ -33,6 +33,7 @@ namespace EShop.Controllers
             {
                 _context.Categories.Add(category);
                 _context.SaveChanges();
+                TempData["success"] = "Category created successfully";
                 return RedirectToAction("Index");
             }
             return View(category);
@@ -68,9 +69,43 @@ namespace EShop.Controllers
                 //existingCat.DisplayOrder = category.DisplayOrder;
                 _context.Categories.Update(category);
                 _context.SaveChanges();
+                TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index");
             }
                 return View(category);
+        }
+
+        [HttpGet]//get data clikcing on create
+        public IActionResult Delete(int? id)
+        {
+            if (!id.HasValue || id == 0)
+            {
+                return NotFound();
+            }
+            var result = _context.Categories.FirstOrDefault(x => x.Id == id);
+
+            if (result != null)
+            {
+                return View(result);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult DeleteConfirm(int? id)
+        {
+            if (!id.HasValue || id == 0)
+            {
+                return NotFound();
+            }
+            var result = _context.Categories.FirstOrDefault(x => x.Id == id);
+            _context.Categories.Remove(result);
+            _context.SaveChanges();
+            TempData["success"] = "Category Deleted successfully";
+            return RedirectToAction("Index");
         }
     }
 }

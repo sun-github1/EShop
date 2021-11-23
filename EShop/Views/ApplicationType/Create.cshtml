@@ -1,39 +1,26 @@
 ﻿@model EShop.Models.ApplicationType
 
 <form method="post" asp-action="Create">
-    <div class="border p-3">
 
-        <div class="form-group row">
-            <h2 class="text-info pl-3">Add Application Type</h2>
-        </div>
-        <div class="row">
-            <div class="col-8">
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="ApplicationName"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="ApplicationName" class="form-control" />
-                    </div>
-                </div>
+    <div class="border p-3 mt-4">
 
-             
-                <div class="form-group row">
-                    <div class="col-8 offset-4 row">
-                        <div class="col">
-                            <input type="submit" class="btn btn-info w-100" value="Create" />
-                        </div>
-                        <div class="col">
-                            @*<a asp-action="Create" asp-controller="Category" class="btn btn-primary">Create New Category</a>*@
-                            <a asp-action="Index" asp-controller="ApplicationType" class="btn btn-success w-100">Back</a>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
+        <div class="row pb-2">
+            <h2 class="text-primary">Add Application Type</h2>
         </div>
 
+        @*<div class="text-danger" asp-validation-summary="All"></dikv>*@
+        <div class="mb-3">
+            <label asp-for="ApplicationName"></label>
+            <input asp-for="ApplicationName" class="form-control" />
+            <span asp-validation-for="ApplicationName" class="text-danger"></span>
+        </div>
+
+
+
+        <div class="mb-3">
+            <input type="submit" class="btn btn-info" value="Create" />
+            <a asp-action="Index" asp-controller="ApplicationType" class="btn btn-success">Back</a>
+        </div>
     </div>
+    
 </form>

@@ -1,0 +1,15 @@
+﻿@model EShop.Models.Category
+
+<input asp-for="@Model.Id" hidden />
+<br />
+<form method="post" asp-action="DeleteConfirm" asp-route-id="@Model.Id">
+<div class="card text-white bg-secondary mb-3" style="width:100%">
+  <div class="card-header">Confirmation</div>
+  <div class="card-body">
+    
+    <p class="card-text">Are you sure want to delete the category for @Model.CategoryName ?</p>
+    <input type="submit" class="btn btn-danger" value="Yes"/>
+    <a asp-action="Index" asp-controller="Category" class="btn btn-success">No</a>
+  </div>
+</div>
+</form>
