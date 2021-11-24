@@ -15,7 +15,7 @@ namespace EShop.DataAccessLayer
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<ApplicationType> ApplicationTypes { get; set; }
-
+        public DbSet<Product> Products { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
