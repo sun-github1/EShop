@@ -27,12 +27,12 @@
                 <div class="collapse navbar-collapse" id="navbarColor02">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
                                 Home
                                 <span class="visually-hidden">(current)</span>
                             </a>
                         </li>
-                        <li class="nav-item">
+                       @* <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Category" asp-action="Index">Categories</a>
                         </li>
                         <li class="nav-item">
@@ -40,17 +40,17 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
-                        </li>
-                        @* <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                        </li>*@
+                         <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Content Management</a>
                             <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Separated link</a>
+                             <a class="nav-link" asp-area="" asp-controller="Category" asp-action="Index">Categories</a>
+                           <a class="nav-link" asp-area="" asp-controller="ApplicationType" asp-action="Index">Applications</a>
+                            <a class="nav-link" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
+                           @* <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Separated link</a>*@
                             </div>
-                            </li>*@
+                            </li>
                     </ul>
                     @*<form class="d-flex">
                         <input class="form-control me-sm-2" type="text" placeholder="Search">

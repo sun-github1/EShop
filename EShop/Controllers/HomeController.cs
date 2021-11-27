@@ -1,5 +1,8 @@
-﻿using EShop.Models;
+﻿using EShop.DataAccessLayer;
+using EShop.Models;
+using EShop.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,16 +15,31 @@ namespace EShop.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly AppDbContext _context;
+        public HomeController(ILogger<HomeController> logger,
+            AppDbContext context)
         {
             _logger = logger;
+            _context= context;
         }
 
         public IActionResult Index()
         {
+            HomeViewModel homeVM = new HomeViewModel()
+            {
+                Products = _context.Products.Include(x => x.Category)
+                .Include(y=>y.ApplicationType),
+                Categories = _context.Categories.ToList()
+            };
+            return View(homeVM);
+        }
+
+
+        public IActionResult Details(int? id)
+        {
             return View();
         }
+
 
         public IActionResult Privacy()
         {
