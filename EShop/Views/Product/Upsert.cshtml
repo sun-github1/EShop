@@ -1,10 +1,14 @@
 ﻿@model EShop.Models.ViewModels.ProductViewModel;
 
 
-@{ 
-    var title = "Create Product";
-    var isForUpdate = (Model.Product != null && Model.Product.Id > 0) ? true : false;
- }
+@{ var title = "Create Product";
+                var isForUpdate = (Model.Product != null && Model.Product.Id > 0) ? true : false;
+                var filepath = "";
+                if (isForUpdate)
+                {
+                    filepath = System.IO.Path.Combine(@WC.ImagePath,Model.Product.ImagePath);
+                } 
+   }
 
 <form method="post" enctype="multipart/form-data">
     <div class="border p-3 mt-4">
@@ -38,57 +42,72 @@
         </div>
 
         <div class="mb-3">
-            <label asp-for="Product.ImagePath"></label>
-            <input asp-for="Product.ImagePath" class="form-control" type="file" 
-                   name="files" id="uploadBox" multiple
-                   />
+            <label asp-for="Product.ShortDesc"></label>
+            <input asp-for="Product.ShortDesc" class="form-control" />
+            <span asp-validation-for="Product.ShortDesc" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
+            <label asp-for="Product.ImagePath"></label>
+            <input asp-for="Product.ImagePath" class="form-control" type="file"
+                   name="files" id="uploadBox" multiple />
+        </div>
+        <div class="mb-3">
+            @* Keep this empty *@
+            @if (Model.Product.Id != 0)
+            {
+    <img src="@filepath" width="30%" style="border-radius:5px; border:1px solid #bbb" />}
+        </div>
+        <div class="mb-3">
             <label asp-for="Product.CategoryId"></label>
-           <select asp-for="Product.CategoryId" asp-items="@Model.CategorySelectList"
-            class="form-select" >
-        <option disabled>--Select Category--</option>
-        </select>
+            <select asp-for="Product.CategoryId" asp-items="@Model.CategorySelectList"
+                    class="form-select">
+                <option disabled selected>--Select Category--</option>
+            </select>
             <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
         </div>
+        <div class="mb-3">
+            <label asp-for="Product.ApplicationId"></label>
+            <select asp-for="Product.ApplicationId" asp-items="@Model.ApplicationTypeSelectList"
+                    class="form-select">
+                <option disabled selected>--Select ApplicationType--</option>
+            </select>
+            <span asp-validation-for="Product.ApplicationId" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            @if (isForUpdate)
+            {
+    <input type="submit" class="btn btn-primary" value="Update" /> }
+else
+{
+    <input type="submit" class="btn btn-primary" value="Create"
+           onclick="return validateInput()" />}
+            <a asp-action="Index" asp-controller="Product" class="btn btn-success">
+                <i class="bi bi-box-arrow-left"></i>&nbsp;Back
+            </a>
+        </div>
 
-    <div class="mb-3">
-        @if (isForUpdate)
-        {
-            <input type="submit" class="btn btn-primary" value="Update" /> }
-                else
-                {
-                    <input type="submit" class="btn btn-primary" value="Create" 
-                    onclick="return validateInput()"/>
-                }
-        <a asp-action="Index" asp-controller="Product" class="btn btn-success">
-            <i class="bi bi-box-arrow-left"></i>&nbsp;Back</a>
-    </div>
     </div>
 </form>
 
 @section Scripts{
     @{
-                        <partial name="_ValidationScriptsPartial.cshtml" />
-    }
+                        <partial name="_ValidationScriptsPartial.cshtml" /> }
     <script>
-    $(document).ready(function() {
-  $('.summernote').summernote({
-  height:250
-  });
-});
-    function validateInput()
-    {
-        if(document.getElementById("uploadBox").value=="")
-        {
-            Swal.fire(
-            "Error!",
-            "Please upload an image for the product",
-            "error"
-            );
-            return false;
-        }
-        return true;
-    }</script>
+        $(document).ready(function () {
+            $('.summernote').summernote({
+                height: 250
+            });
+        });
+        function validateInput() {
+            if (document.getElementById("uploadBox").value == "") {
+                Swal.fire(
+                    "Error!",
+                    "Please upload an image for the product",
+                    "error"
+                );
+                return false;
+            }
+            return true;
+        }</script>
 } 

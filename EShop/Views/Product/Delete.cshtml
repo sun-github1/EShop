@@ -1,0 +1,15 @@
+﻿@model EShop.Models.Product
+
+<input asp-for="@Model.Id" hidden />
+<br />
+<form method="post" asp-action="DeleteConfirm" asp-controller="Product" asp-route-id="@Model.Id">
+    <div class="card text-white bg-secondary mb-3" style="width:100%">
+        <div class="card-header">Confirmation</div>
+        <div class="card-body">
+
+            <p class="card-text">Are you sure want to delete the Product for @Model.ProductName ?</p>
+            <input type="submit" class="btn btn-danger" value="Yes" />
+            <a asp-action="Index" asp-controller="Product" class="btn btn-success">No</a>
+        </div>
+    </div>
+</form>

@@ -10,6 +10,7 @@ namespace EShop.Models
         [Display(Name = "Product Name")]
         [Required]
         public string ProductName { get; set; }
+        public string ShortDesc { get; set; }
 
         [Required]
         public string Description { get; set; }
@@ -23,5 +24,11 @@ namespace EShop.Models
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
+
+
+        [Display(Name = "Application Type")]
+        public int? ApplicationId { get; set; }
+        [ForeignKey("ApplicationId")]
+        public ApplicationType ApplicationType { get; set; }
     }
 }

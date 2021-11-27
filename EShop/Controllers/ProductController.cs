@@ -26,7 +26,9 @@ namespace EShop.Controllers
         public IActionResult Index()
         {
             IEnumerable<Product> listOfProduct = _context.Products
-                .Include(x => x.Category).ToList();
+                .Include(x => x.Category)
+                .Include(y => y.ApplicationType)
+                .ToList();
             return View(listOfProduct);
         }
 
@@ -48,7 +50,13 @@ namespace EShop.Controllers
                     {
                         Text = i.CategoryName,
                         Value = i.Id.ToString()
-                    })
+                    }),
+                ApplicationTypeSelectList = _context
+                .ApplicationTypes.Select(i => new SelectListItem
+                {
+                    Text = i.ApplicationName,
+                    Value = i.Id.ToString()
+                })
             };
 
             if (id.HasValue && id > 0)
@@ -81,6 +89,33 @@ namespace EShop.Controllers
 
                 if (productVM.Product.Id > 0)
                 {//for update
+                    var existingProduct = _context.Products.AsNoTracking()
+                        .FirstOrDefault(x=>x.Id== productVM.Product.Id);
+
+                    if(files.Count>0)
+                    {
+                        string upload = webrootpath + WC.ImagePath;
+                        string filename = Guid.NewGuid().ToString();
+                        string extension = Path.GetExtension(files[0].FileName);
+                        using (var fileStream = new FileStream
+                             (Path.Combine(upload, filename+extension), FileMode.Create))
+                        {
+                            files[0].CopyTo(fileStream);
+                        }
+
+                        //delete old file if exists
+                        var oldfile = Path.Combine(upload, existingProduct.ImagePath);
+
+                        if (System.IO.File.Exists(oldfile))
+                        {
+                            System.IO.File.Delete(oldfile);
+                        }
+
+                    }
+                    else//file not updated, use the old image only
+                    {
+                        productVM.Product.ImagePath = existingProduct.ImagePath;
+                    }
                     _context.Products.Update(productVM.Product);
                     _context.SaveChanges();
                     TempData["success"] = "Product updated successfully";
@@ -92,7 +127,7 @@ namespace EShop.Controllers
                     string filename = Guid.NewGuid().ToString();
                     string extension = Path.GetExtension(files[0].FileName);
                     using (var fileStream = new FileStream
-                        (Path.Combine(upload, filename, extension), FileMode.Create))
+                        (Path.Combine(upload, filename+extension), FileMode.Create))
                     {
                         files[0].CopyTo(fileStream);
                     }
@@ -150,6 +185,8 @@ namespace EShop.Controllers
             }
             var result = _context.Products.FirstOrDefault(x => x.Id == id);
 
+           
+
             if (result != null)
             {
                 return View(result);
@@ -168,6 +205,20 @@ namespace EShop.Controllers
                 return NotFound();
             }
             var result = _context.Products.FirstOrDefault(x => x.Id == id);
+            if (!string.IsNullOrEmpty(result.ImagePath))
+            {
+                string webrootpath = _webHostEnvironment.WebRootPath;
+                string upload = webrootpath + WC.ImagePath;
+               
+                //delete old file if exists
+                var oldfile = Path.Combine(upload, result.ImagePath);
+
+                if (System.IO.File.Exists(oldfile))
+                {
+                    System.IO.File.Delete(oldfile);
+                }
+            }
+
             _context.Products.Remove(result);
             _context.SaveChanges();
             TempData["success"] = "Product Deleted successfully";

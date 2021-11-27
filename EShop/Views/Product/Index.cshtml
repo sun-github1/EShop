@@ -35,6 +35,9 @@
                                                     <th>
                                                         Category
                                                     </th>
+                                                    <th>
+                                                        ApplicationType
+                                                    </th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -46,7 +49,7 @@
                                         @eachProd.ProductName
                                     </td>
                                     <td>
-                                        @eachProd.Description
+                                        @eachProd.ShortDesc
                                     </td>
                                     <td>
                                         @eachProd.Price
@@ -54,12 +57,20 @@
                                     <td>
                                         @if (eachProd.Category != null)
                                         {
-                                            @eachProd.Category.CategoryName
+                                                            @eachProd.Category.CategoryName }
+                                                        else
+                                                        {
+                                        <div>Not Found</div>;
                                         }
-                                        else
+                                    </td>
+                                    <td>
+                                        @if (eachProd.ApplicationType != null)
                                         {
-                                            <div>NA</div>;
-                                        } 
+                                                            @eachProd.ApplicationType.ApplicationName }
+                                                        else
+                                                        {
+                                        <div>Not Found</div>;
+                                        }
                                     </td>
                                     <td class="text-center">
                                         <div class="w-75 btn-group" role="group">
@@ -68,7 +79,7 @@
                                                 <i class="bi bi-pencil-square"></i>
                                                 Edit
                                             </a>
-                                            <a asp-action="Delete" asp-controller="Category" asp-route-id="@eachProd.Id" class="btn btn-danger mx-2">
+                                            <a asp-action="Delete" asp-controller="Product" asp-route-id="@eachProd.Id" class="btn btn-danger mx-2">
                                                 <i class="bi bi-trash"></i> Delete
                                             </a>
                                         </div>
