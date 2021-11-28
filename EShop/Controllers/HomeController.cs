@@ -20,7 +20,7 @@ namespace EShop.Controllers
             AppDbContext context)
         {
             _logger = logger;
-            _context= context;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -28,7 +28,7 @@ namespace EShop.Controllers
             HomeViewModel homeVM = new HomeViewModel()
             {
                 Products = _context.Products.Include(x => x.Category)
-                .Include(y=>y.ApplicationType),
+                .Include(y => y.ApplicationType),
                 Categories = _context.Categories.ToList()
             };
             return View(homeVM);
@@ -37,7 +37,18 @@ namespace EShop.Controllers
 
         public IActionResult Details(int? id)
         {
-            return View();
+            if (id.HasValue)
+            {
+                DetailsViewModel detailsVM = new DetailsViewModel()
+                {
+                    Product = _context.Products.Include(x => x.Category)
+                        .Include(y => y.ApplicationType).FirstOrDefault(x => x.Id == id.Value),
+                    ExistsInCart = false
+                };
+                return View(detailsVM);
+            }
+            return NotFound();
+            
         }
 
 
