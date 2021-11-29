@@ -12,8 +12,8 @@ var filepath = "";
 
     <div class="card text-white bg-secondary mb-3" style="border:1px solid #222">
         <div class="card-body px-3 pt-3 pb-1 row">
-            <div class="col-7"><label class="float-left">@Model.ProductName</label></div>
-            <div class="col-5"><label class="float-right"><span class="text-info h5">@Model.Price</span> / sqft</label> </div>
+            <div class="col-6"><label class="float-left">@Model.ProductName</label></div>
+            <div class="col-6"><label class="float-right"><span class="text-info h5">@String.Format("{0:C0}", @Model.Price) </span> / sqft</label> </div>
         </div>
         <img class="card-img-top img-fluid d-block mx-auto mb-3" src="@filepath" alt="Card image cap">
         <div class="card-body p-1 px-3 row">

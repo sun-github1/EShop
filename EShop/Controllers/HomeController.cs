@@ -1,4 +1,5 @@
 ﻿using EShop.DataAccessLayer;
+using EShop.Extension;
 using EShop.Models;
 using EShop.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -45,10 +46,71 @@ namespace EShop.Controllers
                         .Include(y => y.ApplicationType).FirstOrDefault(x => x.Id == id.Value),
                     ExistsInCart = false
                 };
+
+                List<ShoppingCart> lisifShoppingCart = new List<ShoppingCart>();
+                var cart = HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart);
+
+                if (cart != null && cart.Count() > 0)
+                {
+                    lisifShoppingCart = cart.ToList();
+                    if(lisifShoppingCart.FirstOrDefault(x=>x.ProductId==detailsVM.Product.Id)!=null)
+                    {
+                        detailsVM.ExistsInCart = true;
+                    }
+                }
+                else
+                {
+                    detailsVM.ExistsInCart = false;
+                }
+
                 return View(detailsVM);
             }
             return NotFound();
             
+        }
+
+        [HttpPost, ActionName("Details")]
+        public IActionResult DetailsPost(int? id)
+        {
+            if (id.HasValue)
+            {
+                List<ShoppingCart> lisifShoppingCart = new List<ShoppingCart>();
+                var cart = HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart);
+
+                if (cart!=null && cart.Count()>0)
+                {
+                    lisifShoppingCart = cart.ToList();
+                }
+                lisifShoppingCart.Add(new ShoppingCart() { ProductId = id.Value });
+                HttpContext.Session.Set<IEnumerable<ShoppingCart>>(WC.SessionCart, lisifShoppingCart);
+                return RedirectToAction(nameof(Index));
+            }
+            return NotFound();
+
+        }
+
+
+        public IActionResult RemoveFromCart(int? id)
+        {
+            if (id.HasValue)
+            {
+                List<ShoppingCart> lisifShoppingCart = new List<ShoppingCart>();
+                var cart = HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart);
+
+                if (cart != null && cart.Count() > 0)
+                {
+                    lisifShoppingCart = cart.ToList();
+                    var item = lisifShoppingCart.FirstOrDefault(x => x.ProductId == id.Value);
+                    if (item != null)
+                    {
+                        lisifShoppingCart.Remove(item);
+                    }
+                }
+                HttpContext.Session.Set<IEnumerable<ShoppingCart>>(WC.SessionCart, lisifShoppingCart);
+                return RedirectToAction(nameof(Index));
+            }
+            return NotFound();
+
         }
 
 
