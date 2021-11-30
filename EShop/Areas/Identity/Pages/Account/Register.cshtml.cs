@@ -70,9 +70,10 @@ namespace EShop.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if(await _roleManager.RoleExistsAsync(WC.AdminRole))
+            if(!await _roleManager.RoleExistsAsync(WC.AdminRole))
             {
                 await _roleManager.CreateAsync(new IdentityRole(WC.AdminRole));
+                await _roleManager.CreateAsync(new IdentityRole(WC.CustomerRole));
             }
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -92,6 +93,16 @@ namespace EShop.Areas.Identity.Pages.Account
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
+                    if(User.IsInRole(WC.AdminRole))
+                    {
+                        //an admin has loggedin and they try to create a new user
+                        await _userManager.AddToRoleAsync(user, WC.AdminRole);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, WC.CustomerRole);
+                    }
+                    
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
