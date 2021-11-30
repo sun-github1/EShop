@@ -1,4 +1,4 @@
-using EShop.DataAccessLayer;
+using Eshop.DataAccess.DataAccessLayer;
 using EShop.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

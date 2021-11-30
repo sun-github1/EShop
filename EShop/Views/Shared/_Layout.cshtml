@@ -1,6 +1,8 @@
-﻿@using Microsoft.AspNetCore.Http
+﻿
+@using Eshop.Utility
+@using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
-@using EShop.Extension
+@using EShop.Utility
 
 
 
@@ -41,7 +43,7 @@
                                 <span class="visually-hidden">(current)</span>
                             </a>
                         </li>
-                        @if (User.IsInRole(WC.AdminRole))
+                        @if (User.IsInRole(@WC.AdminRole))
                         {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Content Management</a>

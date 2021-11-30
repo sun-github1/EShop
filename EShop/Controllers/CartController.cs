@@ -1,5 +1,4 @@
-﻿using EShop.DataAccessLayer;
-using EShop.Extension;
+﻿using EShop.Utility;
 using EShop.Models;
 using EShop.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +12,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Eshop.Utility;
+using Eshop.DataAccess.DataAccessLayer;
 
 namespace EShop.Controllers
 {

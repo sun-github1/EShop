@@ -1,7 +1,8 @@
 ﻿@page
 @model RegisterModel
+@using EShop.Utility
 @{ var pagetitle = "Register";
-    @if (User.IsInRole(EShop.WC.AdminRole))
+    @if (User.IsInRole(@Eshop.Utility.WC.AdminRole))
     {
         pagetitle = "Register an Admin Account";
     }

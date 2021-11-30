@@ -19,7 +19,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\" />
     <Folder Include="wwwroot\images\product\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eshop.DataAccess\Eshop.DataAccess.csproj" />
+    <ProjectReference Include="..\EShop.Models\EShop.Models.csproj" />
+    <ProjectReference Include="..\Eshop.Utility\Eshop.Utility.csproj" />
   </ItemGroup>
 
 </Project>

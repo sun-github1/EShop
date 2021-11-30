@@ -1,4 +1,5 @@
-﻿using EShop.DataAccessLayer;
+﻿using Eshop.DataAccess.DataAccessLayer;
+using Eshop.Utility;
 using EShop.Models;
 using EShop.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
