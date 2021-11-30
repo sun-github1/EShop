@@ -70,7 +70,7 @@ namespace EShop.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if(!await _roleManager.RoleExistsAsync(WC.AdminRole))
+            if (!await _roleManager.RoleExistsAsync(WC.AdminRole))
             {
                 await _roleManager.CreateAsync(new IdentityRole(WC.AdminRole));
                 await _roleManager.CreateAsync(new IdentityRole(WC.CustomerRole));
@@ -85,15 +85,17 @@ namespace EShop.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, 
+                var user = new ApplicationUser
+                {
+                    UserName = Input.Email,
                     Email = Input.Email,
-                    FullName=Input.FullName,
-                   PhoneNumber = Input.PhoneNumber,
+                    FullName = Input.FullName,
+                    PhoneNumber = Input.PhoneNumber,
                 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
-                    if(User.IsInRole(WC.AdminRole))
+                    if (User.IsInRole(WC.AdminRole))
                     {
                         //an admin has loggedin and they try to create a new user
                         await _userManager.AddToRoleAsync(user, WC.AdminRole);
@@ -102,7 +104,7 @@ namespace EShop.Areas.Identity.Pages.Account
                     {
                         await _userManager.AddToRoleAsync(user, WC.CustomerRole);
                     }
-                    
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -122,7 +124,14 @@ namespace EShop.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        if (User.IsInRole(WC.AdminRole))
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index");
+                        }
                         return LocalRedirect(returnUrl);
                     }
                 }

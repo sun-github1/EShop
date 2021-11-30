@@ -24,7 +24,7 @@
 
 
 
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Navbar</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,8 @@
                                 <span class="visually-hidden">(current)</span>
                             </a>
                         </li>
-                        
+                        @if (User.IsInRole(WC.AdminRole))
+                        {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Content Management</a>
                             <div class="dropdown-menu">
@@ -52,6 +53,7 @@
                                 <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Create Admin User</a>
                             </div>
                         </li>
+                        }
                         <li>
                             @if (HttpContextAccessor.HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart) != null)
                             {

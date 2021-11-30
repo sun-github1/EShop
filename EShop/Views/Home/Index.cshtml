@@ -9,7 +9,7 @@
         </button>
         @foreach (var obj in Model.Categories)
         {
-            <button class="btn btn-outline-secondary filter-button" data-filter="@obj.CategoryName.Replace(' ','_')">
+            <button class="btn btn-outline-primary filter-button" data-filter="@obj.CategoryName.Replace(' ','_')">
                 @obj.CategoryName
             </button>
         }

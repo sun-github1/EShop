@@ -10,11 +10,11 @@
     <form method="post">
         <input asp-for="@Model.Product.Id" hidden/>
         <div class="container pt-4">
-            <div class="card text-white mb-3">
-                <div class="card-header">
+            <div class="card border-info mb-3">
+                <div class="card-header bg-dark text-white">
                     <div class="row">
                         <div class="col-12 col-md-6">
-                            <h1 class="text-white">@Model.Product.ProductName</h1>
+                            <h1 >@Model.Product.ProductName</h1>
                         </div>
                         <div class="col-12 col-md-6 text-end">
                             <h1 class="text-warning">@Model.Product.Price.ToString("c") </h1>

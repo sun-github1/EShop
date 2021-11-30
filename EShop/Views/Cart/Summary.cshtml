@@ -4,14 +4,16 @@
     <br />
 
         <div class="container">
-            <div class="card text-white bg-secondary">
-                <div class="card-header row">
-                    <div class="col-6">
-                        <i class="fa fa-shopping-cart"></i> &nbsp;
-                        Order Summary
-                    </div>
-                    <div class="col-6 text-end">
-                        <a class="btn btn-outline-light btn-sm">Back to Cart</a>
+            <div class="card border-info">
+                <div class="card-header bg-dark text-white">
+                    <div class="row">
+                        <div class="col-6">
+                            <i class="fa fa-shopping-cart"></i> &nbsp;
+                            Order Summary
+                        </div>
+                        <div class="col-6 text-end">
+                            <a class="btn btn-outline-light btn-sm">Back to Cart</a>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -63,7 +65,7 @@
                                         <li class="list-group-item d-flex justify-content-between">
                                             <div>
                                                 <h6 class="my-0">@Model.ProductList[i].ProductName</h6>
-                                                <small class="text-light">Price per Sqft:@Model.ProductList[i].Price.ToString("c")</small>
+                                                <small class="text-success" >Price per Sqft:@Model.ProductList[i].Price.ToString("c")</small>
                                             </div>
                                         </li>
                                         }

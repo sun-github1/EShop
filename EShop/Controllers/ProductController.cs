@@ -1,6 +1,7 @@
 ﻿using EShop.DataAccessLayer;
 using EShop.Models;
 using EShop.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace EShop.Controllers
 {
+    [Authorize(Roles = WC.AdminRole)]
     public class ProductController : Controller
     {
         private readonly AppDbContext _context;
@@ -103,6 +105,7 @@ namespace EShop.Controllers
                             files[0].CopyTo(fileStream);
                         }
 
+                        productVM.Product.ImagePath = filename + extension;
                         //delete old file if exists
                         var oldfile = Path.Combine(upload, existingProduct.ImagePath);
 
@@ -110,7 +113,7 @@ namespace EShop.Controllers
                         {
                             System.IO.File.Delete(oldfile);
                         }
-
+                        
                     }
                     else//file not updated, use the old image only
                     {
