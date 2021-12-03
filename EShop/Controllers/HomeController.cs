@@ -1,4 +1,5 @@
 ﻿using Eshop.DataAccess.DataAccessLayer;
+using Eshop.DataAccess.IRepository;
 using Eshop.Utility;
 using EShop.Models;
 using EShop.Models.ViewModels;
@@ -18,21 +19,23 @@ namespace EShop.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly AppDbContext _context;
+        private readonly IProductRepository _prodRepository;
+        private readonly ICategoryRepository _categoryRepository;
         public HomeController(ILogger<HomeController> logger,
-            AppDbContext context)
+            IProductRepository prodRepository,
+            ICategoryRepository categoryRepository)
         {
             _logger = logger;
-            _context = context;
+            _prodRepository = prodRepository;
+            _categoryRepository = categoryRepository;
         }
 
         public IActionResult Index()
         {
             HomeViewModel homeVM = new HomeViewModel()
             {
-                Products = _context.Products.Include(x => x.Category)
-                .Include(y => y.ApplicationType),
-                Categories = _context.Categories.ToList()
+                Products = _prodRepository.GetAll(includeProperties: new List<string>() { "Category", "ApplicationType" }),
+                Categories = _categoryRepository.GetAll(isTracking:false)
             };
             return View(homeVM);
         }
@@ -44,8 +47,8 @@ namespace EShop.Controllers
             {
                 DetailsViewModel detailsVM = new DetailsViewModel()
                 {
-                    Product = _context.Products.Include(x => x.Category)
-                        .Include(y => y.ApplicationType).FirstOrDefault(x => x.Id == id.Value),
+                    Product = _prodRepository.FirstOrDefault(x => x.Id == id.Value,
+                         includeProperties: new List<string>() { "Category", "ApplicationType" }),
                     ExistsInCart = false
                 };
 

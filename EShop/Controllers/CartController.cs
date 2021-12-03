@@ -14,23 +14,34 @@ using System.Text;
 using System.Threading.Tasks;
 using Eshop.Utility;
 using Eshop.DataAccess.DataAccessLayer;
+using Eshop.DataAccess.IRepository;
 
 namespace EShop.Controllers
 {
     [Authorize]
     public class CartController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IProductRepository _prodRepository;
+        private readonly IApplicationUserRepository _appUserRepository;
+        private readonly IInquiryHeaderRepository _inqHeaderRepository;
+        private readonly IInquiryDetailRepository _inqDetRepository;
+
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IEmailSender _emailSender;
         [BindProperty]
         public ProductUserViewModel ProductUserVM { get; set; }
 
-        public CartController(AppDbContext context,
+        public CartController(IProductRepository prodRepository,
+            IApplicationUserRepository appUserRepository,
+            IInquiryHeaderRepository inqHeaderRepository,
+            IInquiryDetailRepository inqDetRepository,
             IWebHostEnvironment webHostEnvironment,
             IEmailSender emailSender)
         {
-            this._context = context;
+            this._prodRepository = prodRepository;
+            _appUserRepository = appUserRepository;
+            _inqDetRepository = inqDetRepository;
+            _inqHeaderRepository = inqHeaderRepository;
             _webHostEnvironment = webHostEnvironment;
             _emailSender = emailSender;
         }
@@ -43,7 +54,7 @@ namespace EShop.Controllers
             if (cart != null && cart.Count() > 0)
             {
                 List<int> productInCart = cart.Select(x => x.ProductId).ToList();
-                prodList = _context.Products.Where(x => productInCart.Contains(x.Id));
+                prodList = _prodRepository.GetAll(x => productInCart.Contains(x.Id), isTracking:false);
             }
             else
             {
@@ -98,11 +109,11 @@ namespace EShop.Controllers
                 lisifShoppingCart = cart.ToList();
             }
             List<int> productInCart = cart.Select(x => x.ProductId).ToList();
-            IEnumerable<Product> prodList = _context.Products.Where(x => productInCart.Contains(x.Id));
+            IEnumerable<Product> prodList = _prodRepository.GetAll(x => productInCart.Contains(x.Id), isTracking: false);
 
             ProductUserVM = new ProductUserViewModel() { 
                 ProductList= prodList.ToList(),
-                ApplicationUser=_context.ApplicationUsers.FirstOrDefault(u=>u.Id==claim.Value)
+                ApplicationUser=_appUserRepository.FirstOrDefault(u=>u.Id==claim.Value)
             };
 
             return View(ProductUserVM);
@@ -112,6 +123,10 @@ namespace EShop.Controllers
         [ActionName("Summary")]
         public async Task<IActionResult> SummaryPost(ProductUserViewModel productvm)
         {
+
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
             var pathToTemplate=_webHostEnvironment.WebRootPath
                 +Path.DirectorySeparatorChar.ToString()
                 +"template"+Path.DirectorySeparatorChar.ToString()
@@ -132,9 +147,30 @@ namespace EShop.Controllers
                 ProductUserVM.ApplicationUser.PhoneNumber,
                 productListSB.ToString()
                 );
-
-
             await _emailSender.SendEmailAsync("",subject,messagebody);
+
+            //add inquiry header
+
+            InquiryHeader inquiryHeader = new InquiryHeader() { 
+            ApplicationUserId= claim.Value,
+            FullName= ProductUserVM.ApplicationUser.FullName,
+            Email = ProductUserVM.ApplicationUser.Email,
+            PhoneNumber = ProductUserVM.ApplicationUser.PhoneNumber,
+            InquiryDate = DateTime.Now,
+            };
+
+            _inqHeaderRepository.Add(inquiryHeader);
+            _inqHeaderRepository.SaveChanges();
+            foreach (var prod in ProductUserVM.ProductList)
+            {
+                InquiryDetail inquiryDetail = new InquiryDetail()
+                {
+                    InquiryHeaderId = inquiryHeader.Id,
+                    ProductId=prod.Id
+                };
+                _inqDetRepository.Add(inquiryDetail);             
+            }
+            _inqDetRepository.SaveChanges();
 
             return RedirectToAction(nameof(InquiryConfirmation));
         }
