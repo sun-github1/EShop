@@ -1,0 +1,14 @@
+﻿using EShop.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Eshop.DataAccess.IRepository
+{
+    public interface IApplicationTypeRepository: IGenericRepository<ApplicationType>
+    {
+        void Update(ApplicationType entity);
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using Eshop.DataAccess.DataAccessLayer;
+using Eshop.DataAccess.IRepository;
 using Eshop.Utility;
 using EShop.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -13,15 +14,15 @@ namespace EShop.Controllers
     [Authorize(Roles = WC.AdminRole)]
     public class ApplicationTypeController : Controller
     {
-        private readonly AppDbContext _context;
-        public ApplicationTypeController(AppDbContext context)
+        private readonly IApplicationTypeRepository _applicationTypeRepository;
+        public ApplicationTypeController(IApplicationTypeRepository applicationTypeRepository)
         {
-            this._context = context;
+            this._applicationTypeRepository = applicationTypeRepository;
         }
 
         public IActionResult Index()
         {
-            var result = _context.ApplicationTypes.ToList();
+            var result = _applicationTypeRepository.GetAll();
             return View(result);
         }
 
@@ -36,8 +37,8 @@ namespace EShop.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.ApplicationTypes.Add(applicationType);
-                _context.SaveChanges();
+                _applicationTypeRepository.Add(applicationType);
+                _applicationTypeRepository.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View();
@@ -50,7 +51,7 @@ namespace EShop.Controllers
             {
                 return NotFound();
             }
-            var result = _context.ApplicationTypes.FirstOrDefault(x => x.Id == id);
+            var result = _applicationTypeRepository.FirstOrDefault(x => x.Id == id);
 
             if (result != null)
             {
@@ -67,8 +68,8 @@ namespace EShop.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.ApplicationTypes.Update(appType);
-                _context.SaveChanges();
+                _applicationTypeRepository.Update(appType);
+                _applicationTypeRepository.SaveChanges();
                 TempData["success"] = "ApplicationType updated successfully";
                 return RedirectToAction("Index");
             }
@@ -82,7 +83,7 @@ namespace EShop.Controllers
             {
                 return NotFound();
             }
-            var result = _context.ApplicationTypes.FirstOrDefault(x => x.Id == id);
+            var result = _applicationTypeRepository.FirstOrDefault(x => x.Id == id);
 
             if (result != null)
             {
@@ -101,9 +102,9 @@ namespace EShop.Controllers
             {
                 return NotFound();
             }
-            var result = _context.ApplicationTypes.FirstOrDefault(x => x.Id == id);
-            _context.ApplicationTypes.Remove(result);
-            _context.SaveChanges();
+            var result = _applicationTypeRepository.FirstOrDefault(x => x.Id == id);
+            _applicationTypeRepository.Remove(result);
+            _applicationTypeRepository.SaveChanges();
             TempData["success"] = "ApplicationType Deleted successfully";
             return RedirectToAction("Index");
         }

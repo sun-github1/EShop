@@ -1,4 +1,5 @@
 ﻿using Eshop.DataAccess.DataAccessLayer;
+using Eshop.DataAccess.IRepository;
 using Eshop.Utility;
 using EShop.Models;
 using EShop.Models.ViewModels;
@@ -18,22 +19,25 @@ namespace EShop.Controllers
     [Authorize(Roles = WC.AdminRole)]
     public class ProductController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IProductRepository _productRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public ProductController(AppDbContext context,
+        public ProductController(IProductRepository productRepository,
             IWebHostEnvironment webHostEnvironment)
         {
-            this._context = context;
+            this._productRepository = productRepository;
             this._webHostEnvironment = webHostEnvironment;
         }
         public IActionResult Index()
         {
-            IEnumerable<Product> listOfProduct = _context.Products
-                .Include(x => x.Category)
-                .Include(y => y.ApplicationType)
+            IEnumerable<Product> listOfProduct = _productRepository.GetAll(null,
+                null,
+                includeProperties: new List<string>() { "Category", "ApplicationType" }
+                , false)
                 .ToList();
             return View(listOfProduct);
         }
+
+       
 
         [HttpGet]
         public IActionResult Upsert(int? id)
@@ -48,23 +52,17 @@ namespace EShop.Controllers
             ProductViewModel productVM = new ProductViewModel()
             {
                 Product = new Product(),
-                CategorySelectList = _context.
-                    Categories.Select(i => new SelectListItem
-                    {
-                        Text = i.CategoryName,
-                        Value = i.Id.ToString()
-                    }),
-                ApplicationTypeSelectList = _context
-                .ApplicationTypes.Select(i => new SelectListItem
-                {
-                    Text = i.ApplicationName,
-                    Value = i.Id.ToString()
-                })
+                CategorySelectList = _productRepository.
+                    GetAllDropdownList(WC.CategoryName),
+                ApplicationTypeSelectList = _productRepository.
+                    GetAllDropdownList(WC.ApplicationTypeName),
             };
 
             if (id.HasValue && id > 0)
             {//for update
-                var result = _context.Products.FirstOrDefault(x => x.Id == id);
+                var result = _productRepository.FirstOrDefault(x => x.Id == id, 
+                    includeProperties: new List<string>() { "Category", "ApplicationType" },
+                    isTracking:false);
 
                 if (result != null)
                 {
@@ -92,8 +90,8 @@ namespace EShop.Controllers
 
                 if (productVM.Product.Id > 0)
                 {//for update
-                    var existingProduct = _context.Products.AsNoTracking()
-                        .FirstOrDefault(x=>x.Id== productVM.Product.Id);
+                    var existingProduct = _productRepository
+                        .FirstOrDefault(x=>x.Id== productVM.Product.Id, isTracking:false);
 
                     if(files.Count>0)
                     {
@@ -120,8 +118,8 @@ namespace EShop.Controllers
                     {
                         productVM.Product.ImagePath = existingProduct.ImagePath;
                     }
-                    _context.Products.Update(productVM.Product);
-                    _context.SaveChanges();
+                    _productRepository.Update(productVM.Product);
+                    _productRepository.SaveChanges();
                     TempData["success"] = "Product updated successfully";
                     return RedirectToAction("Index");
                 }
@@ -138,8 +136,8 @@ namespace EShop.Controllers
 
                     productVM.Product.ImagePath = filename + extension;
 
-                    _context.Products.Add(productVM.Product);
-                    _context.SaveChanges();
+                    _productRepository.Add(productVM.Product);
+                    _productRepository.SaveChanges();
                     TempData["success"] = "Product created successfully";
                     return RedirectToAction("Index");
                 }
@@ -187,7 +185,7 @@ namespace EShop.Controllers
             {
                 return NotFound();
             }
-            var result = _context.Products.FirstOrDefault(x => x.Id == id);
+            var result = _productRepository.FirstOrDefault(x => x.Id == id);
 
            
 
@@ -208,7 +206,7 @@ namespace EShop.Controllers
             {
                 return NotFound();
             }
-            var result = _context.Products.FirstOrDefault(x => x.Id == id);
+            var result = _productRepository.FirstOrDefault(x => x.Id == id);
             if (!string.IsNullOrEmpty(result.ImagePath))
             {
                 string webrootpath = _webHostEnvironment.WebRootPath;
@@ -223,8 +221,8 @@ namespace EShop.Controllers
                 }
             }
 
-            _context.Products.Remove(result);
-            _context.SaveChanges();
+            _productRepository.Remove(result);
+            _productRepository.SaveChanges();
             TempData["success"] = "Product Deleted successfully";
             return RedirectToAction("Index");
         }

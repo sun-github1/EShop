@@ -1,4 +1,5 @@
 ﻿using Eshop.DataAccess.DataAccessLayer;
+using Eshop.DataAccess.IRepository;
 using Eshop.Utility;
 using EShop.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -13,14 +14,14 @@ namespace EShop.Controllers
     [Authorize(Roles = WC.AdminRole)]
     public class CategoryController : Controller
     {
-        private readonly AppDbContext _context;
-        public CategoryController(AppDbContext context)
+        private readonly ICategoryRepository _categoryRepository;
+        public CategoryController(ICategoryRepository categoryRepository)
         {
-            this._context = context;
+            this._categoryRepository = categoryRepository;
         }
         public IActionResult Index()
         {
-            var result = _context.Categories.ToList();
+            var result = _categoryRepository.GetAll();
             return View(result);
         }
         [HttpGet]//get data clikcing on create
@@ -34,8 +35,8 @@ namespace EShop.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Categories.Add(category);
-                _context.SaveChanges();
+                _categoryRepository.Add(category);
+                _categoryRepository.SaveChanges();
                 TempData["success"] = "Category created successfully";
                 return RedirectToAction("Index");
             }
@@ -50,7 +51,7 @@ namespace EShop.Controllers
             {
                 return NotFound();
             }
-            var result = _context.Categories.FirstOrDefault(x => x.Id == id);
+            var result = _categoryRepository.FirstOrDefault(x=>x.Id==id.Value);
 
             if (result != null)
             {
@@ -70,8 +71,8 @@ namespace EShop.Controllers
                 //var existingCat = _context.Categories.FirstOrDefault(x => x.Id == category.Id);
                 //existingCat.CategoryName = category.CategoryName;
                 //existingCat.DisplayOrder = category.DisplayOrder;
-                _context.Categories.Update(category);
-                _context.SaveChanges();
+                _categoryRepository.Update(category);
+                _categoryRepository.SaveChanges();
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index");
             }
@@ -85,7 +86,7 @@ namespace EShop.Controllers
             {
                 return NotFound();
             }
-            var result = _context.Categories.FirstOrDefault(x => x.Id == id);
+            var result = _categoryRepository.FirstOrDefault(x => x.Id == id);
 
             if (result != null)
             {
@@ -104,9 +105,9 @@ namespace EShop.Controllers
             {
                 return NotFound();
             }
-            var result = _context.Categories.FirstOrDefault(x => x.Id == id);
-            _context.Categories.Remove(result);
-            _context.SaveChanges();
+            var result = _categoryRepository.FirstOrDefault(x => x.Id == id);
+            _categoryRepository.Remove(result);
+            _categoryRepository.SaveChanges();
             TempData["success"] = "Category Deleted successfully";
             return RedirectToAction("Index");
         }
