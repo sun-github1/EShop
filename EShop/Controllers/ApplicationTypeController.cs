@@ -41,6 +41,7 @@ namespace EShop.Controllers
                 _applicationTypeRepository.SaveChanges();
                 return RedirectToAction("Index");
             }
+            TempData[WC.Error] = "ApplicationType could not be updated";
             return View();
         }
 
@@ -70,9 +71,10 @@ namespace EShop.Controllers
             {
                 _applicationTypeRepository.Update(appType);
                 _applicationTypeRepository.SaveChanges();
-                TempData["success"] = "ApplicationType updated successfully";
+                TempData[WC.Success] = "ApplicationType updated successfully";
                 return RedirectToAction("Index");
             }
+            TempData[WC.Error] = "ApplicationType could not be updated";
             return View(appType);
         }
 
@@ -105,7 +107,7 @@ namespace EShop.Controllers
             var result = _applicationTypeRepository.FirstOrDefault(x => x.Id == id);
             _applicationTypeRepository.Remove(result);
             _applicationTypeRepository.SaveChanges();
-            TempData["success"] = "ApplicationType Deleted successfully";
+            TempData[WC.Success] = "ApplicationType Deleted successfully";
             return RedirectToAction("Index");
         }
     }

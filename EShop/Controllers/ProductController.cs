@@ -120,7 +120,7 @@ namespace EShop.Controllers
                     }
                     _productRepository.Update(productVM.Product);
                     _productRepository.SaveChanges();
-                    TempData["success"] = "Product updated successfully";
+                    TempData[WC.Success] = "Product updated successfully";
                     return RedirectToAction("Index");
                 }
                 else
@@ -138,7 +138,7 @@ namespace EShop.Controllers
 
                     _productRepository.Add(productVM.Product);
                     _productRepository.SaveChanges();
-                    TempData["success"] = "Product created successfully";
+                    TempData[WC.Success] = "Product created successfully";
                     return RedirectToAction("Index");
                 }
             }
@@ -172,7 +172,7 @@ namespace EShop.Controllers
         //    {
         //        _context.Products.Update(product);
         //        _context.SaveChanges();
-        //        TempData["success"] = "Product updated successfully";
+        //        TempData[WC.Success] = "Product updated successfully";
         //        return RedirectToAction("Index");
         //    }
         //    return View(product);
@@ -223,7 +223,7 @@ namespace EShop.Controllers
 
             _productRepository.Remove(result);
             _productRepository.SaveChanges();
-            TempData["success"] = "Product Deleted successfully";
+            TempData[WC.Success] = "Product Deleted successfully";
             return RedirectToAction("Index");
         }
     }

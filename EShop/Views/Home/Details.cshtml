@@ -1,21 +1,23 @@
 ﻿@using Eshop.Utility
 @model EShop.Models.ViewModels.DetailsViewModel;
 
-@{ var filepath = "";
+@{
+    var filepath = "";
     if (!string.IsNullOrEmpty(Model.Product.ImagePath))
     {
         filepath = System.IO.Path.Combine(@WC.ImagePath, Model.Product.ImagePath);
-    } }
+    }
+}
 
 <div class="">
     <form method="post">
-        <input asp-for="@Model.Product.Id" hidden/>
+        <input asp-for="@Model.Product.Id" hidden />
         <div class="container pt-4">
             <div class="card border-info mb-3">
                 <div class="card-header bg-dark text-white">
                     <div class="row">
                         <div class="col-12 col-md-6">
-                            <h1 >@Model.Product.ProductName</h1>
+                            <h1>@Model.Product.ProductName</h1>
                         </div>
                         <div class="col-12 col-md-6 text-end">
                             <h1 class="text-warning">@Model.Product.Price.ToString("c") </h1>
@@ -39,6 +41,24 @@
                                         <p>@Model.Product.Description</p>
                                     </div>
 
+                                    @if (User.IsInRole(WC.AdminRole))
+                                    {
+                                        <div class="col-12">
+                                            SqFt: 
+                                        </div>
+                                        <div class="col-12">
+                                            @if(Model.ExistsInCart)
+                                            {
+                                                <input asp-form="@Model.Product.TempSqFt" disabled class="form-control" />
+                                            }
+                                            else
+                                            {
+                                                <input asp-form="@Model.Product.TempSqFt" class="form-control" />
+                                            }
+                                            <span class="text-danger" asp-validation-for="@Model.Product.TempSqFt"></span>
+                                        </div>
+                                    }
+
                                 </div>
                             </div>
                         </div>
@@ -52,10 +72,11 @@
                         <div class="col-12 col-md-6 ">
                             @if (@Model.ExistsInCart)
                             {
-                            <a asp-action="RemoveFromCart" asp-route-id="@Model.Product.Id" class="btn btn-warning btn-square form-control btn-lg" style="height:50px;">Remove from Cart</a>}
+                                <a asp-action="RemoveFromCart" asp-route-id="@Model.Product.Id" class="btn btn-warning btn-square form-control btn-lg" style="height:50px;">Remove from Cart</a>
+                            }
                             else
                             {
-                                <button type="submit"  asp-route-id="@Model.Product.Id"  class="btn btn-info form-control btn-lg" style="height:50px;">Add to Cart</button>
+                                <button type="submit" asp-route-id="@Model.Product.Id" class="btn btn-info form-control btn-lg" style="height:50px;">Add to Cart</button>
                             }
                         </div>
                     </div>

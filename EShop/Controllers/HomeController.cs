@@ -75,7 +75,7 @@ namespace EShop.Controllers
         }
 
         [HttpPost, ActionName("Details")]
-        public IActionResult DetailsPost(int? id)
+        public IActionResult DetailsPost(int? id, DetailsViewModel detailVM)
         {
             if (id.HasValue)
             {
@@ -86,8 +86,12 @@ namespace EShop.Controllers
                 {
                     lisifShoppingCart = cart.ToList();
                 }
-                lisifShoppingCart.Add(new ShoppingCart() { ProductId = id.Value });
+                lisifShoppingCart.Add(new ShoppingCart() { 
+                    ProductId = id.Value, 
+                    SqFt= detailVM.Product.TempSqFt 
+                });
                 HttpContext.Session.Set<IEnumerable<ShoppingCart>>(WC.SessionCart, lisifShoppingCart);
+                TempData[WC.Success] = "Item added to the cart successfully";
                 return RedirectToAction(nameof(Index));
             }
             return NotFound();
@@ -112,6 +116,7 @@ namespace EShop.Controllers
                     }
                 }
                 HttpContext.Session.Set<IEnumerable<ShoppingCart>>(WC.SessionCart, lisifShoppingCart);
+                TempData[WC.Warning] = "Item removed from cart successfully";
                 return RedirectToAction(nameof(Index));
             }
             return NotFound();

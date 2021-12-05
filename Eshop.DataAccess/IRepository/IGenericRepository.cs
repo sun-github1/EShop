@@ -27,6 +27,8 @@ namespace Eshop.DataAccess.IRepository
 
         void Remove(T entity);
 
+        void RemoveRange(IEnumerable<T> entities);
+
         //void Update(T entity);
 
         void SaveChanges();

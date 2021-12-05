@@ -37,9 +37,10 @@ namespace EShop.Controllers
             {
                 _categoryRepository.Add(category);
                 _categoryRepository.SaveChanges();
-                TempData["success"] = "Category created successfully";
+                TempData[WC.Success] = "Category created successfully";
                 return RedirectToAction("Index");
             }
+            TempData[WC.Error] = "Category could not be created";
             return View(category);
         }
 
@@ -73,10 +74,11 @@ namespace EShop.Controllers
                 //existingCat.DisplayOrder = category.DisplayOrder;
                 _categoryRepository.Update(category);
                 _categoryRepository.SaveChanges();
-                TempData["success"] = "Category updated successfully";
+                TempData[WC.Success] = "Category updated successfully";
                 return RedirectToAction("Index");
             }
-                return View(category);
+            TempData[WC.Error] = "Category could not be updated";
+            return View(category);
         }
 
         [HttpGet]//get data clikcing on create
@@ -108,7 +110,7 @@ namespace EShop.Controllers
             var result = _categoryRepository.FirstOrDefault(x => x.Id == id);
             _categoryRepository.Remove(result);
             _categoryRepository.SaveChanges();
-            TempData["success"] = "Category Deleted successfully";
+            TempData[WC.Success] = "Category Deleted successfully";
             return RedirectToAction("Index");
         }
     }

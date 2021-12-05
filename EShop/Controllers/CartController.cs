@@ -48,13 +48,21 @@ namespace EShop.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Product> prodList = null;
+            List<Product> prodList = new List<Product>();
             List<ShoppingCart> lisifShoppingCart = new List<ShoppingCart>();
             var cart = HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart);
             if (cart != null && cart.Count() > 0)
             {
                 List<int> productInCart = cart.Select(x => x.ProductId).ToList();
-                prodList = _prodRepository.GetAll(x => productInCart.Contains(x.Id), isTracking:false);
+                IEnumerable<Product>  prodListTemp = _prodRepository.
+                    GetAll(x => productInCart.Contains(x.Id), isTracking:false);
+                
+                foreach(var eachCart in cart)
+                {
+                    var eachProduct = prodListTemp.FirstOrDefault(x => x.Id == eachCart.ProductId);
+                    eachProduct.TempSqFt = eachCart.SqFt;
+                    prodList.Add(eachProduct);
+                }
             }
             else
             {
@@ -82,6 +90,7 @@ namespace EShop.Controllers
                         lisifShoppingCart.Remove(item);
                     }
                 }
+                TempData[WC.Warning] = "Item removed from cart successfully";
                 HttpContext.Session.Set<IEnumerable<ShoppingCart>>(WC.SessionCart, lisifShoppingCart);
             }
             return RedirectToAction(nameof(Index));
@@ -171,7 +180,7 @@ namespace EShop.Controllers
                 _inqDetRepository.Add(inquiryDetail);             
             }
             _inqDetRepository.SaveChanges();
-
+            TempData[WC.Success] = "Inquiry submitted successfully";
             return RedirectToAction(nameof(InquiryConfirmation));
         }
 
